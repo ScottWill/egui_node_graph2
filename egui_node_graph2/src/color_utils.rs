@@ -58,6 +58,11 @@ pub fn color_to_hex(color: Color32) -> String {
     }
 }
 
+#[allow(dead_code)]
+pub fn color_from_rgb(r: u8, g: u8, b: u8) -> Color32 {
+    Color32::from_rgb(r, g, b)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
