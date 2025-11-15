@@ -105,8 +105,8 @@ pub struct MyGraphState {
 impl DataTypeTrait<MyGraphState> for MyDataType {
     fn data_type_color(&self, _user_state: &mut MyGraphState) -> egui::Color32 {
         match self {
-            MyDataType::Scalar => color_from_rgb(38, 109, 211),
-            MyDataType::Vec2 => color_from_rgb(238, 207, 109),
+            MyDataType::Scalar => egui::Color32::from_rgb(38, 109, 211),
+            MyDataType::Vec2 => egui::Color32::from_rgb(238, 207, 109),
         }
     }
 

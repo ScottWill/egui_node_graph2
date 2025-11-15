@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, marker::PhantomData};
 
-use crate::{color_utils::*, CategoryTrait, NodeTemplateIter, NodeTemplateTrait};
+use crate::{color_hex_utils::*, CategoryTrait, NodeTemplateIter, NodeTemplateTrait};
 
 use egui::*;
 
