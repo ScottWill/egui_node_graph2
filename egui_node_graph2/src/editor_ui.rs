@@ -137,7 +137,7 @@ where
         let mut inner_rect = Rect::NAN;
         let mut scene_rect = self.scene_rect;
         let scene_response = Scene::new()
-            .max_inner_size(ui.available_size())
+            .max_inner_size(ui.max_rect().size())
             .zoom_range(self.zoom_range.clone())
             .show(ui, &mut scene_rect, |ui| {
                 graph_response = Some(self.draw_graph_editor_inside_scene(
@@ -1046,16 +1046,15 @@ where
             ));
 
             let node_rect = titlebar_rect.union(body_rect).union(bottom_body_rect);
-            let outline = if self.selected {
-                Shape::Rect(RectShape::new(
+            let outline = match self.selected {
+                true => Shape::Rect(RectShape::new(
                     node_rect.expand(1.0),
                     corner_radius,
                     Color32::WHITE.lighten(0.8),
                     Stroke::NONE,
                     StrokeKind::Inside,
-                ))
-            } else {
-                Shape::Noop
+                )),
+                false => Shape::Noop,
             };
 
             // Take note of the node rect, so the editor can use it later to compute intersections.
