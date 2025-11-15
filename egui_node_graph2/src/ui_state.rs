@@ -1,5 +1,5 @@
 use super::*;
-use std::marker::PhantomData;
+use std::{marker::PhantomData, ops::RangeInclusive};
 
 use egui::Rect;
 #[cfg(feature = "persistence")]
@@ -26,6 +26,8 @@ pub struct GraphEditorState<NodeData, DataType, ValueType, NodeTemplate, UserSta
     pub node_finder: Option<NodeFinder<NodeTemplate>>,
     /// Internal Rect for Scene state
     pub scene_rect: egui::Rect,
+    /// Allowed Zoom Range
+    pub zoom_range: RangeInclusive<f32>,
     pub _user_state: PhantomData<fn() -> UserState>,
 }
 
@@ -42,7 +44,17 @@ impl<NodeData, DataType, ValueType, NodeKind, UserState> Default
             node_positions: Default::default(),
             node_finder: Default::default(),
             scene_rect: Rect::ZERO,
+            zoom_range: 0.2..=2.0,
             _user_state: Default::default(),
         }
+    }
+}
+
+impl<NodeData, DataType, ValueType, NodeKind, UserState>
+    GraphEditorState<NodeData, DataType, ValueType, NodeKind, UserState>
+{
+    pub fn with_zoom_range(zoom_range: RangeInclusive<f32>) -> Self {
+        assert!(0f32.lt(zoom_range.start()), "Range minimum must be greater than zero");
+        Self { zoom_range, ..Default::default() }
     }
 }

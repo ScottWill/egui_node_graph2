@@ -131,17 +131,14 @@ where
         user_state: &mut UserState,
         prepend_responses: Vec<NodeResponse<UserResponse, NodeData>>,
     ) -> GraphResponse<UserResponse, NodeData> {
-        const MIN_ZOOM: f32 = 0.2;
-        const MAX_ZOOM: f32 = 2.0;
-
         ui.set_clip_rect(ui.max_rect());
 
         let mut graph_response = None;
         let mut inner_rect = Rect::NAN;
         let mut scene_rect = self.scene_rect;
         let scene_response = Scene::new()
-            .max_inner_size(ui.max_rect().size())
-            .zoom_range(MIN_ZOOM..=MAX_ZOOM)
+            .max_inner_size(ui.available_size())
+            .zoom_range(self.zoom_range.clone())
             .show(ui, &mut scene_rect, |ui| {
                 graph_response = Some(self.draw_graph_editor_inside_scene(
                     ui, all_kinds, user_state, prepend_responses
@@ -171,9 +168,7 @@ where
         let editor_rect = ui.max_rect();
         let resp = ui.allocate_rect(editor_rect, Sense::hover());
 
-        let cursor_pos = ui
-            .ctx()
-            .input(|i| i.pointer.hover_pos().unwrap_or(Pos2::ZERO));
+        let cursor_pos = ui.ctx().pointer_hover_pos().unwrap_or_default();
         let mut cursor_in_editor = resp.contains_pointer();
         let mut cursor_in_finder = false;
 
