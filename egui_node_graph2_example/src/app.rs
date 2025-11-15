@@ -205,8 +205,8 @@ impl NodeTemplateTrait for MyNodeTemplate {
 
         match self {
             MyNodeTemplate::AddScalar => {
-                // The first input param doesn't use the closure so we can comment
-                // it in more detail.
+                // The first input param doesn't use the closure
+                // simply in order to comment it in more detail.
                 graph.add_input_param(
                     node_id,
                     // This is the name of the parameter. Can be later used to
