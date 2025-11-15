@@ -43,5 +43,8 @@ pub use traits::*;
 
 mod utils;
 
-mod color_hex_utils;
+mod color_utils;
 mod scale;
+
+/// Utility methods to internally convert to Color32
+pub use color_utils::{color_from_hex, color_from_rgb};

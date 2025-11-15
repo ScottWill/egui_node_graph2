@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::num::NonZeroU32;
 
-use crate::color_hex_utils::*;
+use crate::color_utils::*;
 use crate::utils::ColorUtils;
 
 use super::*;

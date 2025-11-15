@@ -58,6 +58,13 @@ pub fn color_to_hex(color: Color32) -> String {
     }
 }
 
+/// Converts raw red, green, blue values into a egui::Color32
+/// - The resulting alpha channel is full opaque (255)
+#[allow(dead_code)]
+pub fn color_from_rgb(r: u8, g: u8, b: u8) -> Color32 {
+    Color32::from_rgb(r, g, b)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,6 +96,18 @@ mod tests {
         assert_eq!(
             color_to_hex(Color32::from_rgba_premultiplied(226, 226, 226, 119)),
             "#e2e2e277".to_string()
+        );
+    }
+
+    #[test]
+    pub fn test_color_from_rgb() {
+        assert_eq!(
+            color_from_rgb(0, 0, 0),
+            Color32::BLACK,
+        );
+        assert_eq!(
+            color_from_rgb(255, 255, 255),
+            Color32::WHITE,
         );
     }
 }
