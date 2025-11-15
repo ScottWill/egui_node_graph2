@@ -5,9 +5,6 @@ use egui::Rect;
 #[cfg(feature = "persistence")]
 use serde::{Deserialize, Serialize};
 
-pub(crate) const MIN_ZOOM: f32 = 0.2;
-pub(crate) const MAX_ZOOM: f32 = 2.0;
-
 #[derive(Clone)]
 #[cfg_attr(feature = "persistence", derive(Serialize, Deserialize))]
 pub struct GraphEditorState<NodeData, DataType, ValueType, NodeTemplate, UserState> {

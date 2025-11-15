@@ -131,13 +131,16 @@ where
         user_state: &mut UserState,
         prepend_responses: Vec<NodeResponse<UserResponse, NodeData>>,
     ) -> GraphResponse<UserResponse, NodeData> {
+        const MIN_ZOOM: f32 = 0.2;
+        const MAX_ZOOM: f32 = 2.0;
+
         ui.set_clip_rect(ui.max_rect());
 
         let mut graph_response = None;
         let mut inner_rect = Rect::NAN;
         let mut scene_rect = self.scene_rect;
         let scene_response = Scene::new()
-            .max_inner_size([350.0, 1000.0])
+            .max_inner_size(ui.max_rect().size())
             .zoom_range(MIN_ZOOM..=MAX_ZOOM)
             .show(ui, &mut scene_rect, |ui| {
                 graph_response = Some(self.draw_graph_editor_inside_scene(
