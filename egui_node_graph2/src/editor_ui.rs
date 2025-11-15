@@ -168,7 +168,7 @@ where
         let editor_rect = ui.max_rect();
         let resp = ui.allocate_rect(editor_rect, Sense::hover());
 
-        let cursor_pos = ui.ctx().pointer_hover_pos().unwrap_or_default();
+        let cursor_pos = scaled_pos(ui);
         let mut cursor_in_editor = resp.contains_pointer();
         let mut cursor_in_finder = false;
 
@@ -563,7 +563,6 @@ where
 
     pub fn show(
         self,
-        // pan_zoom: &PanZoom,
         ui: &mut Ui,
         user_state: &mut UserState,
     ) -> Vec<NodeResponse<UserResponse, NodeData>> {
@@ -842,11 +841,8 @@ where
             let resp = ui.allocate_rect(port_rect, sense);
 
             // Check if the distance between the port and the mouse is the distance to connect
-            let close_enough = if let Some(pointer_pos) = ui.ctx().pointer_hover_pos() {
-                port_rect.center().distance(pointer_pos) < DISTANCE_TO_CONNECT
-            } else {
-                false
-            };
+            let cursor_pos = scaled_pos(ui);
+            let close_enough = port_rect.center().distance(cursor_pos) < DISTANCE_TO_CONNECT;
 
             let port_color = if close_enough {
                 Color32::WHITE
@@ -1150,4 +1146,13 @@ where
 
         resp
     }
+}
+
+#[inline]
+fn scaled_pos(ui: &mut Ui) -> Pos2 {
+    let ui_transform = ui.ctx()
+            .layer_transform_from_global(ui.layer_id())
+            .unwrap_or_default();
+    let pos = ui.ctx().pointer_hover_pos().unwrap_or_default();
+    pos * ui_transform.scaling + ui_transform.translation
 }
