@@ -1,14 +1,12 @@
 use super::*;
-use egui::{Rect, Style, Ui, Vec2};
 use std::marker::PhantomData;
-use std::sync::Arc;
 
-use crate::scale::Scale;
+use egui::Rect;
 #[cfg(feature = "persistence")]
 use serde::{Deserialize, Serialize};
 
-const MIN_ZOOM: f32 = 0.2;
-const MAX_ZOOM: f32 = 2.0;
+pub(crate) const MIN_ZOOM: f32 = 0.2;
+pub(crate) const MAX_ZOOM: f32 = 2.0;
 
 #[derive(Clone)]
 #[cfg_attr(feature = "persistence", derive(Serialize, Deserialize))]
@@ -29,21 +27,11 @@ pub struct GraphEditorState<NodeData, DataType, ValueType, NodeTemplate, UserSta
     pub node_positions: SecondaryMap<NodeId, egui::Pos2>,
     /// The node finder is used to create new nodes.
     pub node_finder: Option<NodeFinder<NodeTemplate>>,
-    /// The panning of the graph viewport.
-    pub pan_zoom: PanZoom,
+    /// Internal Rect for Scene state
+    pub scene_rect: egui::Rect,
     pub _user_state: PhantomData<fn() -> UserState>,
 }
 
-impl<NodeData, DataType, ValueType, NodeKind, UserState>
-    GraphEditorState<NodeData, DataType, ValueType, NodeKind, UserState>
-{
-    pub fn new(default_zoom: f32) -> Self {
-        Self {
-            pan_zoom: PanZoom::new(default_zoom),
-            ..Default::default()
-        }
-    }
-}
 impl<NodeData, DataType, ValueType, NodeKind, UserState> Default
     for GraphEditorState<NodeData, DataType, ValueType, NodeKind, UserState>
 {
@@ -56,74 +44,8 @@ impl<NodeData, DataType, ValueType, NodeKind, UserState> Default
             ongoing_box_selection: Default::default(),
             node_positions: Default::default(),
             node_finder: Default::default(),
-            pan_zoom: Default::default(),
+            scene_rect: Rect::ZERO,
             _user_state: Default::default(),
         }
     }
-}
-
-#[cfg(feature = "persistence")]
-fn _default_clip_rect() -> Rect {
-    Rect::NOTHING
-}
-
-#[derive(Clone)]
-#[cfg_attr(feature = "persistence", derive(Serialize, Deserialize))]
-pub struct PanZoom {
-    pub pan: Vec2,
-    pub zoom: f32,
-    #[cfg_attr(feature = "persistence", serde(skip, default = "_default_clip_rect"))]
-    pub clip_rect: Rect,
-    #[cfg_attr(feature = "persistence", serde(skip, default))]
-    pub zoomed_style: Arc<Style>,
-    #[cfg_attr(feature = "persistence", serde(skip, default))]
-    pub started: bool,
-}
-
-impl Default for PanZoom {
-    fn default() -> Self {
-        PanZoom {
-            pan: Vec2::ZERO,
-            zoom: 1.0,
-            clip_rect: Rect::NOTHING,
-            zoomed_style: Default::default(),
-            started: false,
-        }
-    }
-}
-
-impl PanZoom {
-    pub fn new(zoom: f32) -> PanZoom {
-        let style: Style = Default::default();
-        PanZoom {
-            pan: Vec2::ZERO,
-            zoom,
-            clip_rect: Rect::NOTHING,
-            zoomed_style: Arc::new(style.scaled(1.0)),
-            started: false,
-        }
-    }
-
-    pub fn zoom(&mut self, clip_rect: Rect, style: &Arc<Style>, zoom_delta: f32) {
-        self.clip_rect = clip_rect;
-        let new_zoom = (self.zoom * zoom_delta).clamp(MIN_ZOOM, MAX_ZOOM);
-        self.zoomed_style = Arc::new(style.scaled(new_zoom));
-        self.zoom = new_zoom;
-    }
-}
-
-pub fn show_zoomed<R, F>(
-    default_style: Arc<Style>,
-    zoomed_style: Arc<Style>,
-    ui: &mut Ui,
-    add_content: F,
-) -> R
-where
-    F: FnOnce(&mut Ui) -> R,
-{
-    *ui.style_mut() = (*zoomed_style).clone();
-    let response = add_content(ui);
-    *ui.style_mut() = (*default_style).clone();
-
-    response
 }
