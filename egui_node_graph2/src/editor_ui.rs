@@ -255,7 +255,7 @@ where
                 let finder_rect = ui.min_rect();
                 // If the cursor is not in the main editor, check if the cursor is in the finder
                 // if the cursor is in the finder, then we can consider that also in the editor.
-                if finder_rect.contains(cursor_pos) {
+                if finder_rect.contains(world_pos) {
                     cursor_in_editor = true;
                     cursor_in_finder = true;
                 }
