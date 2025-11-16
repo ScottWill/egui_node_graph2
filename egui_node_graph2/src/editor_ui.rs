@@ -168,7 +168,7 @@ where
         let editor_rect = ui.max_rect();
         let resp = ui.allocate_rect(editor_rect, Sense::hover());
 
-        let cursor_pos = scaled_pos(ui);
+        let (world_pos, cursor_pos) = hover_pos(ui);
         let mut cursor_in_editor = resp.contains_pointer();
         let mut cursor_in_finder = false;
 
@@ -232,11 +232,11 @@ where
         /* Draw the node finder, if open */
         let mut should_close_node_finder = false;
         if let Some(ref mut node_finder) = self.node_finder {
-            let mut node_finder_area = Area::new(Id::new("node_finder")).order(Order::Foreground);
-            if let Some(pos) = node_finder.position {
-                node_finder_area = node_finder_area.current_pos(pos);
+            let mut area = Area::new(Id::new("node_finder")).order(Order::Foreground);
+            if node_finder.just_spawned {
+                area = area.current_pos(world_pos);
             }
-            node_finder_area.show(ui.ctx(), |ui| {
+            area.show(ui.ctx(), |ui| {
                 if let Some(node_kind) = node_finder.show(ui, all_kinds, user_state) {
                     let new_node = self.graph.add_node(
                         node_kind.node_graph_label(user_state),
@@ -841,7 +841,7 @@ where
             let resp = ui.allocate_rect(port_rect, sense);
 
             // Check if the distance between the port and the mouse is the distance to connect
-            let cursor_pos = scaled_pos(ui);
+            let cursor_pos = hover_pos(ui).1;
             let close_enough = port_rect.center().distance(cursor_pos) < DISTANCE_TO_CONNECT;
 
             let port_color = if close_enough {
@@ -1148,10 +1148,11 @@ where
 }
 
 #[inline]
-fn scaled_pos(ui: &mut Ui) -> Pos2 {
+fn hover_pos(ui: &mut Ui) -> (Pos2, Pos2) {
     let ui_transform = ui.ctx()
             .layer_transform_from_global(ui.layer_id())
             .unwrap_or_default();
     let pos = ui.ctx().pointer_hover_pos().unwrap_or_default();
-    pos * ui_transform.scaling + ui_transform.translation
+    let scaled = pos * ui_transform.scaling + ui_transform.translation;
+    (pos, scaled)
 }
