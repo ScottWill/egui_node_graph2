@@ -78,6 +78,25 @@ impl<NodeData, DataType, ValueType> Graph<NodeData, DataType, ValueType> {
         )
     }
 
+    pub fn add_input_param_inline(
+        &mut self,
+        node_id: NodeId,
+        name: String,
+        typ: DataType,
+        value: ValueType,
+        kind: InputParamKind,
+    ) -> InputId {
+        self.add_wide_input_param(
+            node_id,
+            name,
+            typ,
+            value,
+            kind,
+            NonZeroU32::new(1),
+            true,
+        )
+    }
+
     pub fn remove_input_param(&mut self, param: InputId) {
         let node = self[param].node;
         self[node].inputs.retain(|(_, id)| *id != param);
