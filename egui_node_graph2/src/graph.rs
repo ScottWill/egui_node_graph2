@@ -20,7 +20,7 @@ pub struct Node<NodeData> {
 
 /// The three kinds of input params. These describe how the graph must behave
 /// with respect to inline widgets and connections for this parameter.
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "persistence", derive(Serialize, Deserialize))]
 pub enum InputParamKind {
     /// No constant value can be set. Only incoming connections can produce it
