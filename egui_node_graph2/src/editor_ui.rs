@@ -672,7 +672,7 @@ where
                         // Default, but results in a totally safe alternative.
                         let mut value = std::mem::take(&mut self.graph[param_id].value);
 
-                        if !self.graph.connections(param_id).is_empty() || self.graph[param_id].kind == InputParamKind::ConnectionOnly {
+                        if self.graph[param_id].kind == InputParamKind::ConnectionOnly || !self.graph.connections(param_id).is_empty() {
                             let node_responses = value.value_widget_connected(
                                 &param_name,
                                 self.node_id,
